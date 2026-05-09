@@ -199,8 +199,8 @@ session.viewports['Viewport: 1'].assemblyDisplay.geometryOptions.setValues(
 
 ##----------------------------Pulse Parameters---------------------------------
 ###############################################################################
-f=5e6
-Nc=5
+f=5e6 #Centre frequency
+Nc=5 #Number of cycles
 wf=2*np.pi*f
 T=1/f
 Tc=Nc*T
@@ -209,8 +209,10 @@ t=t.reshape(t.shape[0],1)
 time=t
 g1=np.sin(wf*time)
 
-start_time = 5e-9
-end_time = 1.6e-5#1.95e-5#0.92e-5#1.9e-5
+start_time = 5e-9 #A non-zero start time (in s) is used to offset the beginning of the sinusoidal pulse 
+                  #and avoid starting the simulation with 0 displacement and non-zero velocity (since the gradient of sin at 0 is 1)
+
+end_time = 1.6e-5 #Total simulation time (in s)
 
 time = np.append(time, end_time) + start_time
 g1 = np.append(g1, 0.0)
@@ -226,12 +228,13 @@ l1=l1.reshape(l1.shape[0],1)
 ##-----------------------Material Properties for sample------------------------
 ###############################################################################
 
-E_sample=72.997166e9
-v_sample=0.335345
-dens_sample=2579.433958406887
+E_sample=72.997166e9 #Young's modulus (in Pa)
+v_sample=0.335345 #Poisson's ratio
+dens_sample=2579.433958406887 #Material density (in kg/m^3)
 
-alpha_sample=0.0
-beta_sample=0.4e-11 # 1e-11, 8e-12, 4e-12
+alpha_sample=0.0 #alpha parameter of Rayleigh damping (Mass related damping)
+beta_sample=0.4e-11 ##beta parameter of Rayleigh damping (Stifness related damping)
+
 cp_sample = np.sqrt(E_sample*(1-v_sample)/((1+v_sample)*(1-2*v_sample)*dens_sample))
 
 wavelength = cp_sample / f
@@ -239,18 +242,18 @@ wavelength = cp_sample / f
 
 ##----------------------------Sample Dimensions--------------------------------
 ###############################################################################
-H_sample = 10.19e-3#10.217e-3
-W_sample = 0.0016526605425717712#1.664e-3/1.0 # 0.0012889288576178283, 0.0012889288576178283 * 1.6666666666666667
-L_sample = 0.00163#1.664e-3/1.0
+H_sample = 10.19e-3#Height - y-axis (in m)
+W_sample = 0.0016526605425717712#Width - x-axis (in m)
+L_sample = 0.00163#Length - z-axis (in m)
 ###############################################################################
 
 ##----------------------------Porosity Parameters------------------------------
 ###############################################################################
-porosity_range = 4 * np.linspace(4, 10, 1)#[0, 38, 76, 114]
+porosity_range = 4 * np.linspace(4, 10, 1)#[0, 38, 76, 114] #Number of pores to be created within the solid material
 #rmean_range=list(np.linspace(30e-6,100e-6,int((100e-6-30e-6)/5e-6+1.0)))
 #std_range=list(np.linspace(15e-6,25e-6, 3))
 
-rmean_range =[220e-6, ] # 100e-6 #213.67819287444507e-6
+rmean_range =[220e-6, ] # 100e-6 #213.67819287444507e-6 #Pore radius (in m)
 std_range=[0.0,]
 ###############################################################################
 
@@ -258,7 +261,7 @@ std_range=[0.0,]
 ###############################################################################
 elemsize_range=[wavelength / 40, ]#[wavelength / 10, wavelength / 15, wavelength / 20, wavelength / 25, 
 #                wavelength / 30, wavelength / 35, wavelength / 40, wavelength / 45,
- #               wavelength / 50, wavelength / 55, wavelength / 60, wavelength / 65]# 40 is good for HEX and 60 for TET (maybe try 70 for HEX also)
+ #               wavelength / 50, wavelength / 55, wavelength / 60, wavelength / 65]# 40 is good for HEX and 60 for TET (maybe try 70 for HEX also) #Element size
 elemType4 = mesh.ElemType(elemCode=C3D8R, elemLibrary=EXPLICIT,
                           secondOrderAccuracy=OFF, distortionControl=DEFAULT)               
 elemType8 = mesh.ElemType(elemCode=AC3D8, secondOrderAccuracy=OFF, elemLibrary=EXPLICIT)
